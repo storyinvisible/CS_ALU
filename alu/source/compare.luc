@@ -1,0 +1,28 @@
+module compare (
+    input a[16],
+    input b[16],
+    input alufn[2],
+    output cmp[16]
+  ) {
+  adder adder;
+  var z;
+  var n;
+  var v;
+  always {
+    adder.a=a;
+    adder.b=b;
+    adder.alufn=2b01;
+    v=adder.v;
+    n=adder.n;
+    z= adder.z;
+    cmp=16b0;
+    case(alufn){
+      b01:
+        cmp[0]=z;
+      b10:
+        cmp[0]= n^v;
+      b11:
+        cmp[0] = z |(n^v);
+      }
+  }
+}

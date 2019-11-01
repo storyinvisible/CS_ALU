@@ -1,0 +1,20 @@
+module shifter (
+    input alufn[2],
+    input a[16],
+    input b[4],
+    output ashifted[16]
+  ){
+  
+
+  always {
+    ashifted= 16b0;
+    case(alufn[1:0]){
+    b00:
+      ashifted = a<<b[3:0];
+    b01:
+      ashifted = a>>b[3:0];
+    b11:
+      ashifted = $signed(a) >>>b[3:0];
+    }
+  }
+}
