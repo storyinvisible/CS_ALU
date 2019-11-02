@@ -1,45 +1,24 @@
 module adder (
-    input alufn[2],// when the alufn 5,4 == 00
+    input alufn[2],// alufn[1:0] for selecting operation
     input a[16],
     input b[16],
-    output sum[16],
-    output z,
-    output v, 
-    output n
+    output sum[16]
+
   ) {
-  var subs;
-  var sums[16];
+  // This module is capable of performing adding, substraction and multiplication.
+  
   always {
-    subs=b0;
+    
     sum=16b0;
-    sums=16b0;
-    z=0;
-    v=0;
-    n=0;
     case(alufn[1:0]){
       b00:
-        sum= a+b;
-        
+        sum = a + b;
       b01:
-        subs=b1;
-        sum= a-b;
-        sums=a-b;
+        sum = a - b;
       b10:
-        sum = a*b;
-        sums=a*b;
-      b11:
-        sum= a/b;
-        sums=a/b;_
+        sum = a * b;
+             
       } 
-    if(subs){
-      n= sums[15];
-      v= (a[15] &~b[15] &~sums[15]) | (~a[15]&b[15]&sums[15]);
-      if(sums>0){
-        z=0;
-        }
-      else{
-        z=1;
-        }
-    }
+    
   }
 }

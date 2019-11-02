@@ -1,0 +1,247 @@
+module test #(
+    TIME = 4hf  //time constant for state shifting
+    )(
+    input clk,  // clock signal
+    input rst,  // reset
+    input counter[24], //counter for human to see 
+    input start,       //button to start fsm
+    output display[8]  //showing current state on LED
+  ) {
+    alu alu;           //initializing alu
+  
+    //initializing states of fsm
+    .clk(clk), .rst(rst) {
+      fsm state = {IDLE, ADDER1, ADDER2, SUBSTRACT1, SUBSTRACT2, MULTIPLY, AND, OR, XOR, LDR, COMPLT, COMPLE1, COMPLE2, COMPEQ1, COMPEQ2, SHL, SHR, SRA, NAND, NOR, XNOR, NA, END};
+  }
+  var expected;  //correct answer variable
+  
+  // always block
+  always {
+    display = 0; //initializing of LED signal
+    
+    //FSM main part
+    case (state.q){
+    
+      //IDLE state
+      state.IDLE:
+        alu.a = 0;  //alu inputs initializing
+        alu.b = 0;
+        alu.alufn = b0;
+        if (start)                 //state change(FSM begins) when start button is toggerred
+          state.d = state.ADDER1; //next state
+        display = b10101010;  //showing current state
+        
+        
+      //Checking adder states
+      state.ADDER1: //normal adding
+        alu.a = b1;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b0;
+        expected = b100;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.ADDER2; //next state
+        display = b1;  //showing current state
+      
+      state.ADDER2: //overflow adding
+        alu.a = b1000000000000000;  //alu inputs initializing
+        alu.b = b1000000000000000;
+        alu.alufn = b0;
+        expected = b0;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.SUBSTRACT1; //next state
+        display = b10;  //showing current state
+          
+      //Checking substract states
+      state.SUBSTRACT1: //normal substract
+        alu.a = b111;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b1;
+        expected = b100;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.SUBSTRACT2; //next state
+        display = b100;  //showing current state
+        
+      state.SUBSTRACT2: //negative result substract
+        alu.a = b110;  //alu inputs initializing
+        alu.b = b111; 
+        alu.alufn = b1;
+        expected = b1111111111111111;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.MULTIPLY; //next state
+        display = b1000;    //showing current state
+      
+      //Checking multiply state  
+      state.MULTIPLY:
+        alu.a = b1;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b10;
+        expected = b11;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.AND; //next state
+        display = b10000;  //showing current state
+      
+      //checking boolean states   
+      state.AND: //AND boolean
+        alu.a = b10011;  //alu inputs initializing
+        alu.b = b11001;
+        alu.alufn = b11000;
+        expected = b10001;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.OR; //next state
+        display = b100000;  //showing current state
+        
+      state.OR: //OR boolean
+        alu.a = b0001;  //alu inputs initializing
+        alu.b = b1100;
+        alu.alufn = b11110;
+        expected = b1101;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.XOR; //next state
+        display = b1000000;  //showing current state
+        
+      state.XOR: //XOR boolean
+        alu.a = b01;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b10110;
+        expected = b10;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.LDR; //next state
+        display = b10000000;  //showing current state
+        
+      state.LDR: //LDR boolean
+        alu.a = b1;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b11010;
+        expected = b1;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.COMPLT; //next state
+        display = b10000001;  //showing current state
+      
+      //checking compare states   
+      state.COMPLT: //Compare less than
+        alu.a = b1;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b110101;
+        expected = b1;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.COMPLE1; //next state
+        display = b10000010;  //showing current state
+        
+      state.COMPLE1: //Compare less equal(less)
+        alu.a = b1;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b110111;
+        expected = b1;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.COMPLE2; //next state
+        display = b10000100;  //showing current state
+        
+      state.COMPLE2: //Compare less equal(equal)
+        alu.a = b11;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b110111;
+        expected = b1;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.COMPEQ1; //next state
+        display = b10001000;  //showing current state
+        
+      state.COMPEQ1: //Compare equal(equal)
+        alu.a = b11;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b110011;
+        expected = b1;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.COMPEQ2; //next state
+        display = b10010000;  //showing current state
+        
+      state.COMPEQ2: //Compare equal(not equal)
+        alu.a = b11;  //alu inputs initializing
+        alu.b = b111;
+        alu.alufn = b110011;
+        expected = b0;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.SHL; //next state
+        display = b10100000;  //showing current state
+      
+      //Checking shift states  
+      state.SHL: //Shift left
+        alu.a = b1;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b100000;
+        expected = b1000;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.SHR; //next state
+        display = b11000000;  //showing current state
+        
+      state.SHR: //Shift right
+        alu.a = b1000;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b100001;
+        expected = b1;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.SRA; //next state
+        display = b11000001;  //showing current state
+        
+      state.SRA: //Shift right arthmatically
+        alu.a = b1000000000000001;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b100011;
+        expected = b1111000000000000;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.NAND; //next state
+        display = b11000010;  //showing current state
+     
+     //Checking extra boolean states   
+     state.NAND: //NAND boolean
+        alu.a = b10011;  //alu inputs initializing
+        alu.b = b11001;
+        alu.alufn = b10111;
+        expected = b1111111111101110;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.NOR; //next state
+        display = b11000100;  //showing current state
+        
+      state.NOR: //NOR boolean
+        alu.a = b0001;  //alu inputs initializing
+        alu.b = b1100;
+        alu.alufn = b10001;
+        expected = b1111111111110010;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.XNOR; //next state
+        display = b11001000;  //showing current state
+        
+      state.XNOR: //XNOR boolean
+        alu.a = b01;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b11001;
+        expected = b1111111111111101;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.NA; //next state
+        display = b11010000;  //showing current state
+        
+      state.NA: //Not LDR boolean
+        alu.a = b1;  //alu inputs initializing
+        alu.b = b11;
+        alu.alufn = b10101;
+        expected = b1111111111111110;
+        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+          state.d = state.END; //next state
+        display = b11100000;     //showing current state
+      
+      //Finish all chekcing       
+      state.END:
+        alu.a = b1;
+        alu.b = b11;
+        alu.alufn = b0;
+        display = b11111111; //light all LED showing checking finished    
+      
+      //default states
+      default:
+        alu.a = 0;
+        alu.b = 0;
+        alu.alufn = 0;
+        state.d = state.IDLE;
+        display = b10101010;       
+    }
+  }
+}

@@ -24,11 +24,17 @@ module mojo_top (
     // The reset conditioner is used to synchronize the reset signal to the FPGA
     // clock. This ensures the entire FPGA comes out of reset at the same time.
     reset_conditioner reset_cond;
+    .rst(rst) {
+    test test; // initialize the tester
+    dff counter[24]; // used to slow down the test progress for human to detect the change  
+    }  
   }
+  
   
   always {
     reset_cond.in = ~rst_n; // input raw inverted reset signal
     rst = reset_cond.out;   // conditioned reset
+    
     
     led = 8h00;             // turn LEDs off
     spi_miso = bz;          // not using SPI
@@ -38,5 +44,17 @@ module mojo_top (
     io_led = 3x{{8h00}};    // turn LEDs off
     io_seg = 8hff;          // turn segments off
     io_sel = 4hf;           // select no digits
+    
+    test.counter = counter.q; // feed the counter to tester
+    if (io_dip[0][0]){ // use DIP switch[0][0] to start the test
+      test.start = 1; // indicates start
+      io_led[0][7:0] = test.display; // connect the LED to the output of tester, which indicates the current status of testing
+    }
+    else 
+      test.start = 0; // indicates that the test is not ready for start 
+      io_led[0][7:0] = test.display; // connect LED to test output  
+    
+    counter.d = counter.q + 1; // increment the counter        
+              
   }
 }
