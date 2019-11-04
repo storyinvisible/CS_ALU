@@ -5,7 +5,8 @@ module test #(
     input rst,  // reset
     input counter[24], //counter for human to see 
     input start,       //button to start fsm
-    output display[8]  //showing current state on LED
+    output display[8],   //showing current state on LED
+    output error
   ) {
     alu alu;           //initializing alu
   
@@ -18,7 +19,7 @@ module test #(
   // always block
   always {
     display = 0; //initializing of LED signal
-    
+    error = 1;
     //FSM main part
     case (state.q){
     
@@ -40,6 +41,8 @@ module test #(
         expected = b100;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.ADDER2; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b1;  //showing current state
       
       state.ADDER2: //overflow adding
@@ -49,6 +52,8 @@ module test #(
         expected = b0;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.SUBSTRACT1; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10;  //showing current state
           
       //Checking substract states
@@ -59,6 +64,8 @@ module test #(
         expected = b100;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.SUBSTRACT2; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b100;  //showing current state
         
       state.SUBSTRACT2: //negative result substract
@@ -68,6 +75,8 @@ module test #(
         expected = b1111111111111111;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.MULTIPLY; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b1000;    //showing current state
       
       //Checking multiply state  
@@ -78,6 +87,8 @@ module test #(
         expected = b11;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.AND; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10000;  //showing current state
       
       //checking boolean states   
@@ -88,6 +99,8 @@ module test #(
         expected = b10001;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.OR; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b100000;  //showing current state
         
       state.OR: //OR boolean
@@ -97,6 +110,8 @@ module test #(
         expected = b1101;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.XOR; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b1000000;  //showing current state
         
       state.XOR: //XOR boolean
@@ -106,6 +121,8 @@ module test #(
         expected = b10;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.LDR; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10000000;  //showing current state
         
       state.LDR: //LDR boolean
@@ -115,6 +132,8 @@ module test #(
         expected = b1;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.COMPLT; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10000001;  //showing current state
       
       //checking compare states   
@@ -125,6 +144,8 @@ module test #(
         expected = b1;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.COMPLE1; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10000010;  //showing current state
         
       state.COMPLE1: //Compare less equal(less)
@@ -134,6 +155,8 @@ module test #(
         expected = b1;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.COMPLE2; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10000100;  //showing current state
         
       state.COMPLE2: //Compare less equal(equal)
@@ -143,6 +166,8 @@ module test #(
         expected = b1;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.COMPEQ1; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10001000;  //showing current state
         
       state.COMPEQ1: //Compare equal(equal)
@@ -152,6 +177,8 @@ module test #(
         expected = b1;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.COMPEQ2; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10010000;  //showing current state
         
       state.COMPEQ2: //Compare equal(not equal)
@@ -161,6 +188,8 @@ module test #(
         expected = b0;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.SHL; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b10100000;  //showing current state
       
       //Checking shift states  
@@ -171,6 +200,8 @@ module test #(
         expected = b1000;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.SHR; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b11000000;  //showing current state
         
       state.SHR: //Shift right
@@ -180,6 +211,8 @@ module test #(
         expected = b1;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.SRA; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect  
         display = b11000001;  //showing current state
         
       state.SRA: //Shift right arthmatically
@@ -189,6 +222,8 @@ module test #(
         expected = b1111000000000000;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.NAND; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect          
         display = b11000010;  //showing current state
      
      //Checking extra boolean states   
@@ -199,6 +234,8 @@ module test #(
         expected = b1111111111101110;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.NOR; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b11000100;  //showing current state
         
       state.NOR: //NOR boolean
@@ -208,6 +245,8 @@ module test #(
         expected = b1111111111110010;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.XNOR; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b11001000;  //showing current state
         
       state.XNOR: //XNOR boolean
@@ -217,6 +256,8 @@ module test #(
         expected = b1111111111111101;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.NA; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b11010000;  //showing current state
         
       state.NA: //Not LDR boolean
@@ -226,6 +267,8 @@ module test #(
         expected = b1111111111111110;
         if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
           state.d = state.END; //next state
+        if (alu.out != expected)
+          error = 0; // indicate error if answer is incorrect
         display = b11100000;     //showing current state
       
       //Finish all chekcing       

@@ -13,7 +13,8 @@ module test_2 (
     input rst,
     input [23:0] counter,
     input start,
-    output reg [7:0] display
+    output reg [7:0] display,
+    output reg error
   );
   
   localparam TIME = 4'hf;
@@ -62,6 +63,7 @@ module test_2 (
     M_state_d = M_state_q;
     
     display = 1'h0;
+    error = 1'h1;
     
     case (M_state_q)
       IDLE_state: begin
@@ -81,6 +83,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = ADDER2_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 1'h1;
       end
       ADDER2_state: begin
@@ -90,6 +95,9 @@ module test_2 (
         expected = 1'h0;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = SUBSTRACT1_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 2'h2;
       end
@@ -101,6 +109,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = SUBSTRACT2_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 3'h4;
       end
       SUBSTRACT2_state: begin
@@ -110,6 +121,9 @@ module test_2 (
         expected = 16'hffff;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = MULTIPLY_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 4'h8;
       end
@@ -121,6 +135,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = AND_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 5'h10;
       end
       AND_state: begin
@@ -130,6 +147,9 @@ module test_2 (
         expected = 5'h11;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = OR_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 6'h20;
       end
@@ -141,6 +161,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = XOR_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 7'h40;
       end
       XOR_state: begin
@@ -150,6 +173,9 @@ module test_2 (
         expected = 2'h2;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = LDR_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 8'h80;
       end
@@ -161,6 +187,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = COMPLT_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 8'h81;
       end
       COMPLT_state: begin
@@ -170,6 +199,9 @@ module test_2 (
         expected = 1'h1;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = COMPLE1_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 8'h82;
       end
@@ -181,6 +213,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = COMPLE2_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 8'h84;
       end
       COMPLE2_state: begin
@@ -190,6 +225,9 @@ module test_2 (
         expected = 1'h1;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = COMPEQ1_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 8'h88;
       end
@@ -201,6 +239,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = COMPEQ2_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 8'h90;
       end
       COMPEQ2_state: begin
@@ -210,6 +251,9 @@ module test_2 (
         expected = 1'h0;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = SHL_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 8'ha0;
       end
@@ -221,6 +265,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = SHR_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 8'hc0;
       end
       SHR_state: begin
@@ -230,6 +277,9 @@ module test_2 (
         expected = 1'h1;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = SRA_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 8'hc1;
       end
@@ -241,6 +291,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = NAND_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 8'hc2;
       end
       NAND_state: begin
@@ -250,6 +303,9 @@ module test_2 (
         expected = 16'hffee;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = NOR_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 8'hc4;
       end
@@ -261,6 +317,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = XNOR_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 8'hc8;
       end
       XNOR_state: begin
@@ -271,6 +330,9 @@ module test_2 (
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = NA_state;
         end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
+        end
         display = 8'hd0;
       end
       NA_state: begin
@@ -280,6 +342,9 @@ module test_2 (
         expected = 16'hfffe;
         if ((M_alu_out == expected) && (counter == 4'hf)) begin
           M_state_d = END_state;
+        end
+        if (M_alu_out != expected) begin
+          error = 1'h0;
         end
         display = 8'he0;
       end

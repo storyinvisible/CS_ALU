@@ -59,13 +59,13 @@ WARNING:Xst:647 - Input <spi_sck> is never used. This port will be preserved and
 WARNING:Xst:647 - Input <avr_tx> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
 WARNING:Xst:647 - Input <avr_rx_busy> is never used. This port will be preserved and left unconnected if it belongs to a top-level block or it belongs to a sub-block and the hierarchy of this sub-block is preserved.
     Found 24-bit register for signal <M_counter_q>.
-    Found 24-bit adder for signal <M_counter_d> created at line 70.
-    Found 1-bit tristate buffer for signal <spi_miso> created at line 50
-    Found 1-bit tristate buffer for signal <spi_channel<3>> created at line 50
-    Found 1-bit tristate buffer for signal <spi_channel<2>> created at line 50
-    Found 1-bit tristate buffer for signal <spi_channel<1>> created at line 50
-    Found 1-bit tristate buffer for signal <spi_channel<0>> created at line 50
-    Found 1-bit tristate buffer for signal <avr_rx> created at line 50
+    Found 24-bit adder for signal <M_counter_d> created at line 75.
+    Found 1-bit tristate buffer for signal <spi_miso> created at line 52
+    Found 1-bit tristate buffer for signal <spi_channel<3>> created at line 52
+    Found 1-bit tristate buffer for signal <spi_channel<2>> created at line 52
+    Found 1-bit tristate buffer for signal <spi_channel<1>> created at line 52
+    Found 1-bit tristate buffer for signal <spi_channel<0>> created at line 52
+    Found 1-bit tristate buffer for signal <avr_rx> created at line 52
     Summary:
 	inferred   1 Adder/Subtractor(s).
 	inferred  24 D-type flip-flop(s).
@@ -88,7 +88,7 @@ Synthesizing Unit <test_2>.
     | States             | 23                                             |
     | Transitions        | 66                                             |
     | Inputs             | 16                                             |
-    | Outputs            | 26                                             |
+    | Outputs            | 31                                             |
     | Clock              | clk (rising_edge)                              |
     | Reset              | rst (positive)                                 |
     | Reset type         | synchronous                                    |
@@ -98,6 +98,7 @@ Synthesizing Unit <test_2>.
     | Implementation     | LUT                                            |
     -----------------------------------------------------------------------
     Summary:
+	inferred  21 Multiplexer(s).
 	inferred   1 Finite State Machine(s).
 Unit <test_2> synthesized.
 
@@ -164,7 +165,8 @@ Macro Statistics
  16-bit comparator equal                               : 1
  16-bit comparator greater                             : 1
  16-bit comparator lessequal                           : 1
-# Multiplexers                                         : 6
+# Multiplexers                                         : 27
+ 1-bit 2-to-1 multiplexer                              : 21
  16-bit 2-to-1 multiplexer                             : 2
  16-bit 4-to-1 multiplexer                             : 3
  24-bit 2-to-1 multiplexer                             : 1
@@ -206,7 +208,8 @@ Macro Statistics
  16-bit comparator equal                               : 1
  16-bit comparator greater                             : 1
  16-bit comparator lessequal                           : 1
-# Multiplexers                                         : 6
+# Multiplexers                                         : 27
+ 1-bit 2-to-1 multiplexer                              : 21
  16-bit 2-to-1 multiplexer                             : 2
  16-bit 4-to-1 multiplexer                             : 3
  24-bit 2-to-1 multiplexer                             : 1
@@ -259,10 +262,10 @@ Optimizing unit <test_2> ...
 
 Mapping all equations...
 Building and optimizing final netlist ...
-Found area constraint ratio of 100 (+ 0) on block mojo_top_0, actual ratio is 1.
-FlipFlop test/M_state_q_FSM_FFd1 has been replicated 2 time(s)
-FlipFlop test/M_state_q_FSM_FFd2 has been replicated 2 time(s)
-FlipFlop test/M_state_q_FSM_FFd3 has been replicated 2 time(s)
+Found area constraint ratio of 100 (+ 0) on block mojo_top_0, actual ratio is 2.
+FlipFlop test/M_state_q_FSM_FFd1 has been replicated 3 time(s)
+FlipFlop test/M_state_q_FSM_FFd2 has been replicated 3 time(s)
+FlipFlop test/M_state_q_FSM_FFd3 has been replicated 3 time(s)
 FlipFlop test/M_state_q_FSM_FFd4 has been replicated 1 time(s)
 FlipFlop test/M_state_q_FSM_FFd5 has been replicated 2 time(s)
 
@@ -276,8 +279,8 @@ Unit <mojo_top_0> processed.
 Final Register Report
 
 Macro Statistics
-# Registers                                            : 42
- Flip-Flops                                            : 42
+# Registers                                            : 45
+ Flip-Flops                                            : 45
 
 =========================================================================
 
@@ -301,7 +304,7 @@ Clock Information:
 -----------------------------------+------------------------+-------+
 Clock Signal                       | Clock buffer(FF name)  | Load  |
 -----------------------------------+------------------------+-------+
-clk                                | BUFGP                  | 42    |
+clk                                | BUFGP                  | 45    |
 -----------------------------------+------------------------+-------+
 
 Asynchronous Control Signals Information:
@@ -312,9 +315,9 @@ Timing Summary:
 ---------------
 Speed Grade: -2
 
-   Minimum period: 9.137ns (Maximum Frequency: 109.445MHz)
+   Minimum period: 9.181ns (Maximum Frequency: 108.921MHz)
    Minimum input arrival time before clock: 3.526ns
-   Maximum output required time after clock: 6.272ns
-   Maximum combinational path delay: No path found
+   Maximum output required time after clock: 14.107ns
+   Maximum combinational path delay: 9.196ns
 
 =========================================================================

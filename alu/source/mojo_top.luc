@@ -43,12 +43,16 @@ module mojo_top (
     
     io_led = 3x{{8h00}};    // turn LEDs off
     io_seg = 8hff;          // turn segments off
-    io_sel = 4hf;           // select no digits
+    io_sel = 4h0;           // select no digits
+    
     
     test.counter = counter.q; // feed the counter to tester
     if (io_dip[0][0]){ // use DIP switch[0][0] to start the test
       test.start = 1; // indicates start
       io_led[0][7:0] = test.display; // connect the LED to the output of tester, which indicates the current status of testing
+      if (~test.error && counter.q[23] == 1) {
+        io_led[2][7:0] = 8hff; // LED[2] will blink if there is error 
+      }
     }
     else 
       test.start = 0; // indicates that the test is not ready for start 

@@ -36,6 +36,7 @@ module mojo_top_0 (
     .out(M_reset_cond_out)
   );
   wire [8-1:0] M_test_display;
+  wire [1-1:0] M_test_error;
   reg [24-1:0] M_test_counter;
   reg [1-1:0] M_test_start;
   test_2 test (
@@ -43,7 +44,8 @@ module mojo_top_0 (
     .rst(rst),
     .counter(M_test_counter),
     .start(M_test_start),
-    .display(M_test_display)
+    .display(M_test_display),
+    .error(M_test_error)
   );
   reg [23:0] M_counter_d, M_counter_q = 1'h0;
   
@@ -58,11 +60,14 @@ module mojo_top_0 (
     avr_rx = 1'bz;
     io_led = 24'h000000;
     io_seg = 8'hff;
-    io_sel = 4'hf;
+    io_sel = 4'h0;
     M_test_counter = M_counter_q;
     if (io_dip[0+0+0-:1]) begin
       M_test_start = 1'h1;
       io_led[0+0+7-:8] = M_test_display;
+      if (~M_test_error && M_counter_q[23+0-:1] == 1'h1) begin
+        io_led[16+0+7-:8] = 8'hff;
+      end
     end else begin
       M_test_start = 1'h0;
     end
