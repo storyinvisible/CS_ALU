@@ -2,7 +2,8 @@
 Computational Structure ALU check off </br>
 The Mojo Code is inside the alu directory</br>
 ALU Commands List</br>
-ADD			000000</br>
+<pre>
+ADD			000000</pre></br>
 SUB			000001</br>
 MUT			000010</br>
 AND			011000</br>
