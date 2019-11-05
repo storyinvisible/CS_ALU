@@ -37,20 +37,34 @@ module mojo_top_0 (
   );
   wire [8-1:0] M_test_display;
   wire [1-1:0] M_test_error;
+  wire [16-1:0] M_test_out;
+  reg [16-1:0] M_test_ma;
+  reg [16-1:0] M_test_mb;
+  reg [6-1:0] M_test_malufn;
   reg [24-1:0] M_test_counter;
-  reg [1-1:0] M_test_start;
+  reg [2-1:0] M_test_start;
   test_2 test (
     .clk(clk),
     .rst(rst),
+    .ma(M_test_ma),
+    .mb(M_test_mb),
+    .malufn(M_test_malufn),
     .counter(M_test_counter),
     .start(M_test_start),
     .display(M_test_display),
-    .error(M_test_error)
+    .error(M_test_error),
+    .out(M_test_out)
   );
   reg [23:0] M_counter_d, M_counter_q = 1'h0;
+  reg [15:0] M_a_d, M_a_q = 1'h0;
+  reg [15:0] M_b_d, M_b_q = 1'h0;
+  reg [5:0] M_alufn_d, M_alufn_q = 1'h0;
   
   always @* begin
+    M_alufn_d = M_alufn_q;
+    M_b_d = M_b_q;
     M_counter_d = M_counter_q;
+    M_a_d = M_a_q;
     
     M_reset_cond_in = ~rst_n;
     rst = M_reset_cond_out;
@@ -62,8 +76,28 @@ module mojo_top_0 (
     io_seg = 8'hff;
     io_sel = 4'h0;
     M_test_counter = M_counter_q;
+    M_test_ma = M_a_q;
+    M_test_mb = M_b_q;
+    M_test_malufn = M_alufn_q;
     if (io_dip[0+0+0-:1]) begin
-      M_test_start = 1'h1;
+      M_test_start = 2'h1;
+      
+      case (io_dip[0+6+1-:2])
+        2'h1: begin
+          M_a_d = {io_dip[16+7-:8], io_dip[8+7-:8]};
+        end
+        2'h2: begin
+          M_b_d = {io_dip[16+7-:8], io_dip[8+7-:8]};
+        end
+      endcase
+      if (io_dip[0+5+0-:1]) begin
+        M_alufn_d = io_dip[8+0+5-:6];
+      end
+      if (io_dip[0+4+0-:1]) begin
+        M_test_start = 2'h2;
+      end
+      io_led[16+0+7-:8] = M_test_out[8+7-:8];
+      io_led[8+0+7-:8] = M_test_out[0+7-:8];
       io_led[0+0+7-:8] = M_test_display;
       if (~M_test_error && M_counter_q[23+0-:1] == 1'h1) begin
         io_led[16+0+7-:8] = 8'hff;
@@ -78,8 +112,14 @@ module mojo_top_0 (
   always @(posedge clk) begin
     if (rst == 1'b1) begin
       M_counter_q <= 1'h0;
+      M_a_q <= 1'h0;
+      M_b_q <= 1'h0;
+      M_alufn_q <= 1'h0;
     end else begin
       M_counter_q <= M_counter_d;
+      M_a_q <= M_a_d;
+      M_b_q <= M_b_d;
+      M_alufn_q <= M_alufn_d;
     end
   end
   

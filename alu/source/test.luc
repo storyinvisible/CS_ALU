@@ -1,18 +1,22 @@
 module test #(
     TIME = 4hf  //time constant for state shifting
     )(
+    input ma[16],
+    input mb[16],
+    input malufn[6],
     input clk,  // clock signal
     input rst,  // reset
     input counter[24], //counter for human to see 
-    input start,       //button to start fsm
+    input start[2],       //button to start fsm
     output display[8],   //showing current state on LED
-    output error
+    output error,
+    output out[16]
   ) {
     alu alu;           //initializing alu
   
     //initializing states of fsm
     .clk(clk), .rst(rst) {
-      fsm state = {IDLE, ADDER1, ADDER2, SUBSTRACT1, SUBSTRACT2, MULTIPLY, AND, OR, XOR, LDR, COMPLT, COMPLE1, COMPLE2, COMPEQ1, COMPEQ2, SHL, SHR, SRA, NAND, NOR, XNOR, NA, END};
+      fsm state = {IDLE, MANNUAL, ADDER1, ADDER2, SUBSTRACT1, SUBSTRACT2, MULTIPLY, AND, OR, XOR, LDR, COMPLT, COMPLE1, COMPLE2, COMPEQ1, COMPEQ2, SHL, SHR, SRA, NAND, NOR, XNOR, NA, END};
   }
   var expected;  //correct answer variable
   
@@ -20,6 +24,7 @@ module test #(
   always {
     display = 0; //initializing of LED signal
     error = 1;
+    out = 0;
     //FSM main part
     case (state.q){
     
@@ -28,11 +33,19 @@ module test #(
         alu.a = 0;  //alu inputs initializing
         alu.b = 0;
         alu.alufn = b0;
-        if (start)                 //state change(FSM begins) when start button is toggerred
+        if (start==b01)                 //state change(FSM begins) when start button is toggerred
           state.d = state.ADDER1; //next state
+        else if (start==b10)
+          state.d = state.MANNUAL;
         display = b10101010;  //showing current state
         
-        
+      state.MANNUAL: // enter mannual mode
+        alu.a=ma;
+        alu.b=mb;
+        alu.alufn=malufn;
+        out=alu.out; // use the a, b, alufn from user input and output the result
+        display = b11110000; // LED[0] will show b11110000 to indicate mannual state
+          
       //Checking adder states
       state.ADDER1: //normal adding
         alu.a = b1;  //alu inputs initializing
@@ -276,7 +289,9 @@ module test #(
         alu.a = b1;
         alu.b = b11;
         alu.alufn = b0;
-        display = b11111111; //light all LED showing checking finished    
+        display = b11111111; //light all LED showing checking finished
+        if (start==b10)
+          state.d = state.MANNUAL;    
       
       //default states
       default:

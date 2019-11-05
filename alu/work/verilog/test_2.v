@@ -9,12 +9,16 @@
      TIME = 4hf
 */
 module test_2 (
+    input [15:0] ma,
+    input [15:0] mb,
+    input [5:0] malufn,
     input clk,
     input rst,
     input [23:0] counter,
-    input start,
+    input [1:0] start,
     output reg [7:0] display,
-    output reg error
+    output reg error,
+    output reg [15:0] out
   );
   
   localparam TIME = 4'hf;
@@ -32,28 +36,29 @@ module test_2 (
   );
   
   localparam IDLE_state = 5'd0;
-  localparam ADDER1_state = 5'd1;
-  localparam ADDER2_state = 5'd2;
-  localparam SUBSTRACT1_state = 5'd3;
-  localparam SUBSTRACT2_state = 5'd4;
-  localparam MULTIPLY_state = 5'd5;
-  localparam AND_state = 5'd6;
-  localparam OR_state = 5'd7;
-  localparam XOR_state = 5'd8;
-  localparam LDR_state = 5'd9;
-  localparam COMPLT_state = 5'd10;
-  localparam COMPLE1_state = 5'd11;
-  localparam COMPLE2_state = 5'd12;
-  localparam COMPEQ1_state = 5'd13;
-  localparam COMPEQ2_state = 5'd14;
-  localparam SHL_state = 5'd15;
-  localparam SHR_state = 5'd16;
-  localparam SRA_state = 5'd17;
-  localparam NAND_state = 5'd18;
-  localparam NOR_state = 5'd19;
-  localparam XNOR_state = 5'd20;
-  localparam NA_state = 5'd21;
-  localparam END_state = 5'd22;
+  localparam MANNUAL_state = 5'd1;
+  localparam ADDER1_state = 5'd2;
+  localparam ADDER2_state = 5'd3;
+  localparam SUBSTRACT1_state = 5'd4;
+  localparam SUBSTRACT2_state = 5'd5;
+  localparam MULTIPLY_state = 5'd6;
+  localparam AND_state = 5'd7;
+  localparam OR_state = 5'd8;
+  localparam XOR_state = 5'd9;
+  localparam LDR_state = 5'd10;
+  localparam COMPLT_state = 5'd11;
+  localparam COMPLE1_state = 5'd12;
+  localparam COMPLE2_state = 5'd13;
+  localparam COMPEQ1_state = 5'd14;
+  localparam COMPEQ2_state = 5'd15;
+  localparam SHL_state = 5'd16;
+  localparam SHR_state = 5'd17;
+  localparam SRA_state = 5'd18;
+  localparam NAND_state = 5'd19;
+  localparam NOR_state = 5'd20;
+  localparam XNOR_state = 5'd21;
+  localparam NA_state = 5'd22;
+  localparam END_state = 5'd23;
   
   reg [4:0] M_state_d, M_state_q = IDLE_state;
   
@@ -64,16 +69,28 @@ module test_2 (
     
     display = 1'h0;
     error = 1'h1;
+    out = 1'h0;
     
     case (M_state_q)
       IDLE_state: begin
         M_alu_a = 1'h0;
         M_alu_b = 1'h0;
         M_alu_alufn = 1'h0;
-        if (start) begin
+        if (start == 2'h1) begin
           M_state_d = ADDER1_state;
+        end else begin
+          if (start == 2'h2) begin
+            M_state_d = MANNUAL_state;
+          end
         end
         display = 8'haa;
+      end
+      MANNUAL_state: begin
+        M_alu_a = ma;
+        M_alu_b = mb;
+        M_alu_alufn = malufn;
+        out = M_alu_out;
+        display = 8'hf0;
       end
       ADDER1_state: begin
         M_alu_a = 1'h1;
@@ -353,6 +370,9 @@ module test_2 (
         M_alu_b = 2'h3;
         M_alu_alufn = 1'h0;
         display = 8'hff;
+        if (start == 2'h2) begin
+          M_state_d = MANNUAL_state;
+        end
       end
       default: begin
         M_alu_a = 1'h0;

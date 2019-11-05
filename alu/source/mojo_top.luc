@@ -27,6 +27,9 @@ module mojo_top (
     .rst(rst) {
     test test; // initialize the tester
     dff counter[24]; // used to slow down the test progress for human to detect the change  
+    dff a[16];
+    dff b[16];
+    dff alufn[6];
     }  
   }
   
@@ -44,11 +47,24 @@ module mojo_top (
     io_led = 3x{{8h00}};    // turn LEDs off
     io_seg = 8hff;          // turn segments off
     io_sel = 4h0;           // select no digits
-    
-    
+   
     test.counter = counter.q; // feed the counter to tester
+    test.ma=a.q;
+    test.mb=b.q;
+    test.malufn=alufn.q;
+    
     if (io_dip[0][0]){ // use DIP switch[0][0] to start the test
-      test.start = 1; // indicates start
+      test.start = b01; // indicates start
+      case (io_dip[0][7:6]){
+        b01:a.d=c{io_dip[2],io_dip[1]}; // record the first operator a from user input io_dip[2:1]
+        b10:b.d=c{io_dip[2],io_dip[1]}; // record the second operator b from user input io_dip[2:1]
+      }
+      if (io_dip[0][5])
+        alufn.d=io_dip[1][5:0]; // record alufn[5:0] from user input io_dip[1][5:0]
+      if (io_dip[0][4])
+        test.start=b10; // the mannual mode will be unlocked by switching on io_dip[0][5] && io_dip[0][0]
+      io_led[2][7:0] = test.out[15:8];
+      io_led[1][7:0] = test.out[7:0];
       io_led[0][7:0] = test.display; // connect the LED to the output of tester, which indicates the current status of testing
       if (~test.error && counter.q[23] == 1) {
         io_led[2][7:0] = 8hff; // LED[2] will blink if there is error 
@@ -59,6 +75,6 @@ module mojo_top (
       io_led[0][7:0] = test.display; // connect LED to test output  
     
     counter.d = counter.q + 1; // increment the counter        
-              
+            
   }
 }
