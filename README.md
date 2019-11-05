@@ -1,22 +1,22 @@
 # CS_ALU
 Computational Structure ALU check off </br>
 The Mojo Code is inside the alu directory</br>
-ALU Commands List</br>
-<pre>
-ADD			000000</pre></br>
-SUB			000001</br>
-MUT			000010</br>
-AND			011000</br>
-OR			011110</br>
-XOR			010110</br>
-LDR			011010</br>
-NAND		010111</br>
-NOR			010001</br>
-XNOR		011001</br>
-NLDR		010101</br>
-CPLT		110101</br>
-CPLE		110111</br>
-CPEQ		110011</br>
-SHL			100000</br>
-SHR			100001</br>
-SRA			100011</br>
+ALU Command | ALUFN
+----------- | -----
+ADD | 000000
+SUB	| 000001
+MUT | 000010
+AND	| 011000
+OR | 011110
+XOR	| 010110
+LDR	| 011010
+NAND | 010111
+NOR	| 010001
+XNOR | 011001
+NLDR | 010101
+CPLT | 110101
+CPLE | 110111
+CPEQ | 110011
+SHL | 100000
+SHR | 100001
+SRA | 100011
