@@ -10,13 +10,13 @@ module test #(
     input start[2],       //button to start fsm
     output display[8],   //showing current state on LED
     output error,
-    output out[16]
+    output out[16] // output from manual mode
   ) {
     alu alu;           //initializing alu
   
     //initializing states of fsm
     .clk(clk), .rst(rst) {
-      fsm state = {IDLE, MANNUAL, ADDER1, ADDER2, SUBSTRACT1, SUBSTRACT2, MULTIPLY, AND, OR, XOR, LDR, COMPLT, COMPLE1, COMPLE2, COMPEQ1, COMPEQ2, SHL, SHR, SRA, NAND, NOR, XNOR, NA, END};
+      fsm state = {IDLE, MANUAL, ADDER1, ADDER2, SUBSTRACT1, SUBSTRACT2, MULTIPLY, AND, OR, XOR, LDR, COMPLT, COMPLE1, COMPLE2, COMPEQ1, COMPEQ2, SHL, SHR, SRA, NAND, NOR, XNOR, NA, END};
   }
   var expected;  //correct answer variable
   
@@ -36,15 +36,15 @@ module test #(
         if (start==b01)                 //state change(FSM begins) when start button is toggerred
           state.d = state.ADDER1; //next state
         else if (start==b10)
-          state.d = state.MANNUAL;
+          state.d = state.MANUAL;
         display = b10101010;  //showing current state
         
-      state.MANNUAL: // enter mannual mode
+      state.MANUAL: // enter manual mode
         alu.a=ma;
         alu.b=mb;
         alu.alufn=malufn;
         out=alu.out; // use the a, b, alufn from user input and output the result
-        display = b11110000; // LED[0] will show b11110000 to indicate mannual state
+        display = b11110000; // LED[0] will show b11110000 to indicate manual state
           
       //Checking adder states
       state.ADDER1: //normal adding
@@ -291,7 +291,7 @@ module test #(
         alu.alufn = b0;
         display = b11111111; //light all LED showing checking finished
         if (start==b10)
-          state.d = state.MANNUAL;    
+          state.d = state.MANUAL;    
       
       //default states
       default:
