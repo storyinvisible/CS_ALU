@@ -1,6 +1,6 @@
 # CS_ALU
-Computational Structure ALU check off \n
-The Mojo Code is inside the alu directory \n
+Computational Structure ALU check off__
+The Mojo Code is inside the alu directory__
 ALU Commands List /n
 ADD			000000 /n
 SUB			000001 /n
