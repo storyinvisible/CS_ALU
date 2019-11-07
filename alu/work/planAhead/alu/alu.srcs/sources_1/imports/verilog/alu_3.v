@@ -8,18 +8,27 @@ module alu_3 (
     input [15:0] a,
     input [15:0] b,
     input [5:0] alufn,
-    output reg [15:0] out
+    output reg [15:0] out,
+    output reg [0:0] z,
+    output reg [0:0] v,
+    output reg [0:0] n
   );
   
   
   
   wire [16-1:0] M_adder_sum;
+  wire [1-1:0] M_adder_z;
+  wire [1-1:0] M_adder_v;
+  wire [1-1:0] M_adder_n;
   reg [2-1:0] M_adder_alufn;
   adder_4 adder (
     .a(a),
     .b(b),
     .alufn(M_adder_alufn),
-    .sum(M_adder_sum)
+    .sum(M_adder_sum),
+    .z(M_adder_z),
+    .v(M_adder_v),
+    .n(M_adder_n)
   );
   wire [16-1:0] M_boolean_out;
   reg [4-1:0] M_boolean_alufn;
@@ -48,6 +57,9 @@ module alu_3 (
   
   always @* begin
     out = 1'h0;
+    z = 1'h0;
+    v = 1'h0;
+    n = 1'h0;
     M_adder_alufn = alufn[0+1-:2];
     M_boolean_alufn = alufn[0+3-:4];
     M_compare_alufn = alufn[1+1-:2];
@@ -56,6 +68,9 @@ module alu_3 (
     case (alufn[4+1-:2])
       2'h0: begin
         out = M_adder_sum;
+        z = M_adder_z;
+        v = M_adder_v;
+        n = M_adder_n;
       end
       2'h1: begin
         out = M_boolean_out;

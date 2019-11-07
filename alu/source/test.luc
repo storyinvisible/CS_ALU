@@ -52,7 +52,8 @@ module test #(
         alu.b = b11;
         alu.alufn = b0;
         expected = b100;
-        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+        if ((alu.out == expected) && (alu.z == 0) && (alu.v == 0) 
+        && (alu.n == 0) && (counter == TIME)) //state change when answer correct && z, v, n are correct && counts to TIME
           state.d = state.ADDER2; //next state
         if (alu.out != expected)
           error = 0; // indicate error if answer is incorrect
@@ -63,7 +64,8 @@ module test #(
         alu.b = b1000000000000000;
         alu.alufn = b0;
         expected = b0;
-        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+        if ((alu.out == expected) && (alu.z == 1) && (alu.v == 1) 
+        && (alu.n == 0) && (counter == TIME)) //state change when answer correct && z, v, n are correct && counts to TIME
           state.d = state.SUBSTRACT1; //next state
         if (alu.out != expected)
           error = 0; // indicate error if answer is incorrect
@@ -75,7 +77,8 @@ module test #(
         alu.b = b11;
         alu.alufn = b1;
         expected = b100;
-        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+        if ((alu.out == expected) && (alu.z == 0) && (alu.v == 0) 
+        && (alu.n == 0) && (counter == TIME)) //state change when answer correct && z, v, n are correct && counts to TIME
           state.d = state.SUBSTRACT2; //next state
         if (alu.out != expected)
           error = 0; // indicate error if answer is incorrect
@@ -86,7 +89,8 @@ module test #(
         alu.b = b111; 
         alu.alufn = b1;
         expected = b1111111111111111;
-        if ((alu.out == expected) && (counter == TIME)) //state change when answer correct && counts to TIME
+        if ((alu.out == expected) && (alu.z == 0) && (alu.v == 1) 
+        && (alu.n == 1) && (counter == TIME)) //state change when answer correct && z, v, n are correct && counts to TIME
           state.d = state.MULTIPLY; //next state
         if (alu.out != expected)
           error = 0; // indicate error if answer is incorrect

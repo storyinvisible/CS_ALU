@@ -25,6 +25,9 @@ module test_2 (
   
   
   wire [16-1:0] M_alu_out;
+  wire [1-1:0] M_alu_z;
+  wire [1-1:0] M_alu_v;
+  wire [1-1:0] M_alu_n;
   reg [16-1:0] M_alu_a;
   reg [16-1:0] M_alu_b;
   reg [6-1:0] M_alu_alufn;
@@ -32,11 +35,14 @@ module test_2 (
     .a(M_alu_a),
     .b(M_alu_b),
     .alufn(M_alu_alufn),
-    .out(M_alu_out)
+    .out(M_alu_out),
+    .z(M_alu_z),
+    .v(M_alu_v),
+    .n(M_alu_n)
   );
   
   localparam IDLE_state = 5'd0;
-  localparam MANNUAL_state = 5'd1;
+  localparam MANUAL_state = 5'd1;
   localparam ADDER1_state = 5'd2;
   localparam ADDER2_state = 5'd3;
   localparam SUBSTRACT1_state = 5'd4;
@@ -80,12 +86,12 @@ module test_2 (
           M_state_d = ADDER1_state;
         end else begin
           if (start == 2'h2) begin
-            M_state_d = MANNUAL_state;
+            M_state_d = MANUAL_state;
           end
         end
         display = 8'haa;
       end
-      MANNUAL_state: begin
+      MANUAL_state: begin
         M_alu_a = ma;
         M_alu_b = mb;
         M_alu_alufn = malufn;
@@ -97,7 +103,7 @@ module test_2 (
         M_alu_b = 2'h3;
         M_alu_alufn = 1'h0;
         expected = 3'h4;
-        if ((M_alu_out == expected) && (counter == 4'hf)) begin
+        if ((M_alu_out == expected) && (M_alu_z == 1'h0) && (M_alu_v == 1'h0) && (M_alu_n == 1'h0) && (counter == 4'hf)) begin
           M_state_d = ADDER2_state;
         end
         if (M_alu_out != expected) begin
@@ -110,7 +116,7 @@ module test_2 (
         M_alu_b = 16'h8000;
         M_alu_alufn = 1'h0;
         expected = 1'h0;
-        if ((M_alu_out == expected) && (counter == 4'hf)) begin
+        if ((M_alu_out == expected) && (M_alu_z == 1'h1) && (M_alu_v == 1'h1) && (M_alu_n == 1'h0) && (counter == 4'hf)) begin
           M_state_d = SUBSTRACT1_state;
         end
         if (M_alu_out != expected) begin
@@ -123,7 +129,7 @@ module test_2 (
         M_alu_b = 2'h3;
         M_alu_alufn = 1'h1;
         expected = 3'h4;
-        if ((M_alu_out == expected) && (counter == 4'hf)) begin
+        if ((M_alu_out == expected) && (M_alu_z == 1'h0) && (M_alu_v == 1'h0) && (M_alu_n == 1'h0) && (counter == 4'hf)) begin
           M_state_d = SUBSTRACT2_state;
         end
         if (M_alu_out != expected) begin
@@ -136,7 +142,7 @@ module test_2 (
         M_alu_b = 3'h7;
         M_alu_alufn = 1'h1;
         expected = 16'hffff;
-        if ((M_alu_out == expected) && (counter == 4'hf)) begin
+        if ((M_alu_out == expected) && (M_alu_z == 1'h0) && (M_alu_v == 1'h1) && (M_alu_n == 1'h1) && (counter == 4'hf)) begin
           M_state_d = MULTIPLY_state;
         end
         if (M_alu_out != expected) begin
@@ -371,7 +377,7 @@ module test_2 (
         M_alu_alufn = 1'h0;
         display = 8'hff;
         if (start == 2'h2) begin
-          M_state_d = MANNUAL_state;
+          M_state_d = MANUAL_state;
         end
       end
       default: begin
